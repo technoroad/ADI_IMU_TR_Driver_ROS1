@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<package>
+  <name>adi_driver2</name>
+  <version>1.0.0</version>
+  <description>The adi_driver2 package</description>
+  <maintainer email="takahashi@techno-road.com">TechnoRoad</maintainer>
+
+  <license>BSD</license>
+
+
+  <author email="takahashi@techno-road.com">Sho Takahashi</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>roscpp</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>roslint</build_depend>
+  <build_depend>std_srvs</build_depend>
+  <build_depend>tf</build_depend>
+
+  <run_depend>imu_filter_madgwick</run_depend>
+  <run_depend>rviz_imu_plugin</run_depend>
+  <run_depend>roscpp</run_depend>
+  <run_depend>rqt_plot</run_depend>
+  <run_depend>rviz</run_depend>
+  <run_depend>sensor_msgs</run_depend>
+  <run_depend>xacro</run_depend>
+  <run_depend>std_srvs</run_depend>
+  <run_depend>adi_driver</run_depend>
+
+  <test_depend>roslaunch</test_depend>
+  <test_depend>rostest</test_depend>
+
+  <export>
+
+  </export>
+
+</package>
