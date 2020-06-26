@@ -1,3 +1,3 @@
 [submodule "lib"]
 	path = lib
-	url = git@github.com:technoroad/TR_IMU_LIB.git
+	url = https://github.com/technoroad/TR_IMU_LIB
