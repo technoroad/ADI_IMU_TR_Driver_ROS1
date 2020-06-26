@@ -1,12 +1,11 @@
 <?xml version="1.0"?>
 <package>
-  <name>adi_driver2</name>
+  <name>adi_imu_tr_driver_ros1</name>
   <version>1.0.0</version>
-  <description>The adi_driver2 package</description>
+  <description>The adi_imu_tr_driver_ros1 package</description>
   <maintainer email="takahashi@techno-road.com">TechnoRoad</maintainer>
 
   <license>BSD</license>
-
 
   <author email="takahashi@techno-road.com">Sho Takahashi</author>
 

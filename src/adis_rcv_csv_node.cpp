@@ -70,15 +70,15 @@ public:
     
     // Data publisher
     imu_data_pub_ = node_handle_.advertise<sensor_msgs::Imu>("data_raw", 100);
-    updater_.add("imu", this, &ImuNodeRcvCsv::diagnostic);
+    updater_.add("imu", this, &ImuNodeRcvCsv::Diagnostic);
   }
 
   ~ImuNodeRcvCsv()
   {
-    imu_.closePort();
+    imu_.ClosePort();
   }
 
-  void diagnostic(diagnostic_updater::DiagnosticStatusWrapper &stat) {
+  void Diagnostic(diagnostic_updater::DiagnosticStatusWrapper &stat) {
     if (cant_rcv_cnt_ >= 1) 
     {
       stat.summaryf(diagnostic_msgs::DiagnosticStatus::ERROR,
@@ -93,27 +93,26 @@ public:
   /**
    * @brief Check if the device is opened
    */
-  bool isOpened(void)
+  bool IsOpened(void)
   {
     return (imu_.fd_ >= 0);
   }
   /**
    * @brief Open IMU device file
    */
-  bool open(void)
+  bool Open(void)
   {
     // Open device file
-    if (imu_.openPort(device_) < 0)
+    if (imu_.OpenPort(device_) < 0)
     {
       ROS_ERROR("Failed to open device %s", device_.c_str());
     }
   }
 
-
-  std::string sendCmd(const std::string& cmd, bool is_print = true) 
+  std::string SendCmd(const std::string& cmd, bool is_print = true) 
   {
     std::string ret_str = ""; 
-    ret_str = imu_.sendAndRetCmd(cmd);
+    ret_str = imu_.SendAndRetCmd(cmd);
     if (is_print) 
     {
       ROS_INFO("%s = %s", cmd.c_str(), ret_str.c_str());
@@ -121,9 +120,9 @@ public:
     return ret_str;
   }
 
-  bool checkFormat() 
+  bool CheckFormat() 
   {
-    auto ret_str = sendCmd("GET_FORMAT"); 
+    auto ret_str = SendCmd("GET_FORMAT"); 
     if (ret_str == "X_GYRO_HEX,Y_GYRO_HEX,Z_GYRO_HEX,X_ACC_HEX,Y_ACC_HEX,Z_ACC_HEX,CSUM") 
     {
       imu_.md_ = AdisRcvCsv::Mode::Register;
@@ -141,24 +140,24 @@ public:
     return true;
   }
 
-  void getProductId()
+  void GetProductId()
   {
-    auto ret_str = sendCmd("GET_PROD_ID");
+    auto ret_str = SendCmd("GET_PROD_ID");
     updater_.setHardwareID(ret_str);
   }
 
-  void printFirmVersion()
+  void PrintFirmVersion()
   {
-    auto ret_str = sendCmd("GET_VERSION"); 
+    auto ret_str = SendCmd("GET_VERSION"); 
   }
 
-  bool checkStatus()
+  bool CheckStatus()
   {
-    auto ret_str = sendCmd("GET_STATUS"); 
+    auto ret_str = SendCmd("GET_STATUS"); 
     if (ret_str == "Running") 
     {
       ROS_WARN("Imu state is Running. Send stop command.");
-      sendCmd("stop", /* is_print */false);
+      SendCmd("stop", /* is_print */false);
       return false;
     } 
     else if (ret_str != "Ready") 
@@ -169,10 +168,10 @@ public:
     return true;
   }
 
-  bool checkSensitivity()
+  bool CheckSensitivity()
   {
     std::string ret_str = "";
-    ret_str = sendCmd("GET_SENSI"); 
+    ret_str = SendCmd("GET_SENSI"); 
     if (ret_str == "") 
     {
       ROS_WARN("Could not get sensitivities!");
@@ -180,7 +179,7 @@ public:
     } 
     else
     {
-     if (!imu_.setSensi(ret_str)) 
+     if (!imu_.SetSensi(ret_str)) 
      {
       ROS_WARN("Insufficient number of sensitivities.");
       return false;
@@ -189,17 +188,17 @@ public:
     return true;
   }
 
-  bool isPrepared(void)
+  bool IsPrepared(void)
   {
     return (imu_.st_ == AdisRcvCsv::State::Running);
   }
 
-  bool prepare(void)
+  bool Prepare(void)
   {
-    printFirmVersion();
-    getProductId();
+    PrintFirmVersion();
+    GetProductId();
     // check imu state
-    if (!checkStatus())
+    if (!CheckStatus())
     {
       return false;
     }
@@ -207,7 +206,7 @@ public:
     imu_.st_ = AdisRcvCsv::State::Ready;
 
     // check data format
-    if (!checkFormat())
+    if (!CheckFormat())
     {
       return false;
     }
@@ -215,13 +214,13 @@ public:
     // check sensitivity of gyro and acc
     if (imu_.md_ == AdisRcvCsv::Mode::Register)
     {
-      if (!checkSensitivity()) 
+      if (!CheckSensitivity()) 
       {
         return false;
       }
     }
 
-    auto ret_str = sendCmd("start", /* is_print */false);
+    auto ret_str = SendCmd("start", /* is_print */false);
     if (ret_str != "start") 
     {
       ROS_WARN("Send start cmd. but imu was not started.");
@@ -234,7 +233,7 @@ public:
     return true;
   }
 
-  int pubImuData()
+  int PubImuData()
   {
     sensor_msgs::Imu data;
     data.header.frame_id = frame_id_;
@@ -259,7 +258,7 @@ public:
     imu_data_pub_.publish(data);
   }
 
-  void broadcastImuPose()
+  void BroadcastImuPose()
   {
     static tf::TransformBroadcaster br;
     tf::Transform transform;
@@ -270,12 +269,12 @@ public:
     br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), parent_id_, frame_id_));
   }
 
-  void updateAndPubRegMode() 
+  void UpdateAndPubRegMode() 
   {
-    int res = imu_.updateRegMode();
+    int res = imu_.UpdateRegMode();
     if (res == IMU_OK)
     {
-      pubImuData();
+      PubImuData();
       cant_rcv_cnt_ = 0;
     }
     else    
@@ -286,12 +285,12 @@ public:
     }
   }
 
-  void updateAndPubYprMode() 
+  void UpdateAndPubYprMode() 
   {
-    int res = imu_.updateYprMode();
+    int res = imu_.UpdateYprMode();
     if (res == IMU_OK)
     {
-      broadcastImuPose();
+      BroadcastImuPose();
       cant_rcv_cnt_ = 0;
     }
     else
@@ -302,7 +301,7 @@ public:
     }
   }
 
-  bool spin()
+  bool Spin()
   {
     ros::Rate loop_rate(rate_);
     while (ros::ok())
@@ -311,10 +310,10 @@ public:
       switch (imu_.md_)
       {
         case AdisRcvCsv::Mode::Register:
-          updateAndPubRegMode();
+          UpdateAndPubRegMode();
           break;
         case AdisRcvCsv::Mode::YPR:
-          updateAndPubYprMode();
+          UpdateAndPubYprMode();
           break;
         default:
           ROS_WARN("Unknown imu mode");
@@ -326,7 +325,7 @@ public:
 
     imu_.st_ = AdisRcvCsv::State::Ready;
     imu_.md_ = AdisRcvCsv::Mode::Unknown;
-    imu_.sendCmd("stop");
+    imu_.SendCmd("stop");
     return true;
   }
 };
@@ -337,22 +336,22 @@ int main(int argc, char** argv)
   ros::NodeHandle nh("~");
   ImuNodeRcvCsv node(nh);
 
-  node.open();
-  while (ros::ok() && !node.isOpened())
+  node.Open();
+  while (ros::ok() && !node.IsOpened())
   {
     ROS_WARN("Keep trying to open the device in 1 second period...");
     sleep(1);
-    node.open();
+    node.Open();
   }
 
-  node.prepare();  
-  while (ros::ok() && !node.isPrepared())
+  node.Prepare();  
+  while (ros::ok() && !node.IsPrepared())
   {
     ROS_WARN("Keep trying to prepare the device in 1 second period...");
     sleep(1);
-    node.prepare();
+    node.Prepare();
   }
 
-  node.spin();
+  node.Spin();
   return(0);
 }
