@@ -5,9 +5,11 @@ add_definitions(-std=c++11)
 
 find_package(catkin REQUIRED COMPONENTS roscpp sensor_msgs std_srvs tf roslint)
 
-catkin_package(INCLUDE_DIRS include CATKIN_DEPENDS roscpp sensor_msgs std_srvs)
+catkin_package(
+#  INCLUDE_DIRS 
+  CATKIN_DEPENDS roscpp sensor_msgs std_srvs)
 
-include_directories(include
+include_directories(
   lib/include
   ${catkin_INCLUDE_DIRS}
   )
@@ -32,10 +34,10 @@ install(TARGETS adis_rcv_csv_node
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
-install(DIRECTORY include/${PROJECT_NAME}/
-  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-  FILES_MATCHING PATTERN "*.h"
-  )
+#install(DIRECTORY include/${PROJECT_NAME}/
+#  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+#  FILES_MATCHING PATTERN "*.h"
+#  )
 
 install(DIRECTORY launch
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}

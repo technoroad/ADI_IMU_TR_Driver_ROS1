@@ -1,9 +1,25 @@
 ## ADI_IMU_TR_Driver_ROS1
 
 ### Overview
+“TR-IMU1647X” is Analog Devices IMU sensor that can be easily connected to ROS and output high-precision attitude angles.
 
-TODO
+<div align="center">
+  <img src="doc/TR-IMU16475-2.jpg" width="60%"/>
+</div>
 
+Currently supported devices are:
+
+- [ADIS16470](https://www.analog.com/jp/products/adis16470.html)
+  - Wide Dynamic Range Mini MEMS IMU
+
+- [ADSI16475-2](https://www.analog.com/jp/products/adis16475.html)
+  - Precision, Miniature MEMs IMU
+
+Support for other sensors is possible by adding a library of sensors.
+
+### Operating environment
+OS： Ubuntu 18.04 LTS  
+ROS: ros1 melodic
 
 ### Connection
 
@@ -18,27 +34,36 @@ $ cd [your packages directory]
 $ git clone --recursive https://github.com/technoroad/ADI_IMU_TR_Driver_ROS1
 ```
 
+Then resolve dependencies.
+```
+$ cd [your workspace directory]
+$ rosdep install --from-paths src --ignore-src --rosdistro ${ROS_DISTRO} -y
+```
+
 #### Build
 Go to your workspace directory and run the build command.  
 ```
 $ cd [your workspace directory]
-$ colcon build --symlink-install
+$ catkin_make -DCMAKE_BUILD_TYPE=Release
 ```
+
 Then set the path.
 ```
-$ source ./install/setup.bash
+$ source devel/setup.bash
 ```
 
 #### Run
 Connect your sensor to USB port. Run the launch file as:
 
-``` $ roslaunch adi_imu_tr_driver_ros1 adis_rcv_csv.launch ```
+```
+$ roslaunch adi_imu_tr_driver_ros1 adis_rcv_csv.launch
+```
 
 You can see the model of ADIS16470 breakout board in rviz panel.  
 
 Then show imu values.
 ```
-$ ros2 tocpic echo /imu/data_raw
+$ rostocpic echo /imu/data_raw
 ```
 
 
