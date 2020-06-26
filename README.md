@@ -1,4 +1,4 @@
-## ADIS16xxx-TR
+## ADI_IMU_TR_Driver_ROS1
 
 ### Overview
 
@@ -9,12 +9,38 @@ TODO
 
 TODO
 
-### Quick start
+### How to use
+
+#### Install
+Go to your package directory and clone.
+```
+$ cd [your packages directory]
+$ git clone --recursive https://github.com/technoroad/ADI_IMU_TR_Driver_ROS1
+```
+
+#### Build
+Go to your workspace directory and run the build command.  
+```
+$ cd [your workspace directory]
+$ colcon build --symlink-install
+```
+Then set the path.
+```
+$ source ./install/setup.bash
+```
+
+#### Run
 Connect your sensor to USB port. Run the launch file as:
 
-``` $ roslaunch adi_driver adis_rcv_csv.launch ```
+``` $ roslaunch adi_imu_tr_driver_ros1 adis_rcv_csv.launch ```
 
-You can see the model of ADIS16470 breakout board in rviz panel.
+You can see the model of ADIS16470 breakout board in rviz panel.  
+
+Then show imu values.
+```
+$ ros2 tocpic echo /imu/data_raw
+```
+
 
 ### Topics
 - /imu/data_raw (sensor_msgs/Imu)

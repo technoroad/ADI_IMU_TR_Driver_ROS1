@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(adi_driver2)
+project(adi_imu_tr_driver_ros1)
 
 add_definitions(-std=c++11)
 
