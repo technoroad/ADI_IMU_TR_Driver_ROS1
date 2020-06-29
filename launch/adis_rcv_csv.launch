@@ -11,8 +11,6 @@ Use only YPR mode
   <arg name="publish_tf" default="true"/>
   <arg name="publish_debug_topics" default="false"/>
 
-  <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find adi_driver)/urdf/adis16470_breakout.urdf'" />
-
   <node name="imu" pkg="adi_imu_tr_driver_ros1" type="adis_rcv_csv_node" output="screen">
     <param name="device" value="$(arg device)"/>
     <param name="parent_id" value="$(arg parent_id)"/>
