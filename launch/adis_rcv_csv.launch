@@ -1,6 +1,6 @@
 <launch>
   <arg name="with_filter" default="true"/>
-  <arg name="with_rviz" default="false"/>
+  <arg name="with_rviz" default="true"/>
   <arg name="with_plot" default="false"/>
   <arg name="device" default="/dev/ttyACM0"/>
 Use only YPR mode
@@ -11,7 +11,7 @@ Use only YPR mode
   <arg name="publish_tf" default="true"/>
   <arg name="publish_debug_topics" default="false"/>
 
-  <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find adi_driver)/urdf/adis16470_breakout.urdf'" />
+  <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find adi_imu_tr_driver_ros1)/urdf/adis16470_breakout.urdf'" />
 
   <node name="imu" pkg="adi_imu_tr_driver_ros1" type="adis_rcv_csv_node" output="screen">
     <param name="device" value="$(arg device)"/>

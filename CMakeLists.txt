@@ -39,7 +39,7 @@ install(TARGETS adis_rcv_csv_node
 #  FILES_MATCHING PATTERN "*.h"
 #  )
 
-install(DIRECTORY launch
+install(DIRECTORY launch urdf
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
   USE_SOURCE_PERMISSIONS
   )

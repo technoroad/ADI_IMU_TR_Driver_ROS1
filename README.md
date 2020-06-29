@@ -37,6 +37,7 @@ $ git clone --recursive https://github.com/technoroad/ADI_IMU_TR_Driver_ROS1
 Then resolve dependencies.
 ```
 $ cd [your workspace directory]
+$ rosdep update
 $ rosdep install --from-paths src --ignore-src --rosdistro ${ROS_DISTRO} -y
 ```
 
@@ -61,13 +62,11 @@ $ roslaunch adi_imu_tr_driver_ros1 adis_rcv_csv.launch
 
 You can see the model of ADIS16470 breakout board in rviz panel.  
 
-Then show imu values.
-```
-$ rostocpic echo /imu/data_raw
-```
 
 
 ### Topics
+
+
 - /imu/data_raw (sensor_msgs/Imu)
 
   IMU raw output. It contains angular velocities and linear
