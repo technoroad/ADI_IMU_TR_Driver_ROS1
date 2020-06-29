@@ -106,7 +106,9 @@ public:
     if (imu_.OpenPort(device_) < 0)
     {
       ROS_ERROR("Failed to open device %s", device_.c_str());
+      return false;
     }
+    return true;
   }
 
   std::string SendCmd(const std::string& cmd, bool is_print = true) 
@@ -334,13 +336,14 @@ int main(int argc, char** argv)
 {
   ros::init(argc, argv, "imu");
   ros::NodeHandle nh("~");
+
   ImuNodeRcvCsv node(nh);
 
   node.Open();
   while (ros::ok() && !node.IsOpened())
   {
     ROS_WARN("Keep trying to open the device in 1 second period...");
-    sleep(1);
+    ros::Duration(1).sleep();
     node.Open();
   }
 
@@ -348,7 +351,7 @@ int main(int argc, char** argv)
   while (ros::ok() && !node.IsPrepared())
   {
     ROS_WARN("Keep trying to prepare the device in 1 second period...");
-    sleep(1);
+    ros::Duration(1).sleep();
     node.Prepare();
   }
 
