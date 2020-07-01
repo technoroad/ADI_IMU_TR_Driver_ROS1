@@ -1,34 +1,30 @@
 <launch>
-  <arg name="with_filter" default="true"/>
+Choice mode "Attitude" or "Register"
+  <arg name="mode"      default="Attitude"/>
   <arg name="with_rviz" default="true"/>
   <arg name="with_plot" default="false"/>
-  <arg name="device" default="/dev/ttyACM0"/>
-Use only YPR mode
-  <arg name="parent_id" default="odom"/>
-  <arg name="frame_id" default="imu"/>
-  <arg name="burst_read" default="false"/>
-  <arg name="rate" default="100"/>
-  <arg name="publish_tf" default="true"/>
-  <arg name="publish_debug_topics" default="false"/>
+  <arg name="device"    default="/dev/ttyACM0"/>
+
+  <arg name="parent_id"   default="odom"/>
+  <arg name="frame_id"    default="imu"/>
+  <arg name="rate"        default="100"/>
 
   <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find adi_imu_tr_driver_ros1)/urdf/adis16470_breakout.urdf'" />
 
   <node name="imu" pkg="adi_imu_tr_driver_ros1" type="adis_rcv_csv_node" output="screen">
-    <param name="device" value="$(arg device)"/>
+    <param name="device"    value="$(arg device)"/>
     <param name="parent_id" value="$(arg parent_id)"/>
-    <param name="frame_id" value="$(arg frame_id)"/>
-    <param name="rate" value="$(arg rate)"/>
+    <param name="frame_id"  value="$(arg frame_id)"/>
+    <param name="rate"      value="$(arg rate)"/>
+    <param name="mode"      value="$(arg mode)"/>
   </node>
 
 
-  <node if="$(arg with_rviz)"
-	name="rviz" pkg="rviz" type="rviz" args="-d $(find adi_imu_tr_driver_ros1)/launch/imu.rviz"/>
+  <node if="$(eval with_rviz == 1 and mode == 'Attitude')" name="rviz" pkg="rviz" type="rviz" args="-d $(find adi_imu_tr_driver_ros1)/launch/imu.rviz"/>
 
-  <group ns="plot" if="$(arg with_plot)">
-    <node name="gyro" pkg="rqt_plot" type="rqt_plot"
-	  args="/imu/data_raw/angular_velocity/x:y:z"/>
-    <node name="accl" pkg="rqt_plot" type="rqt_plot"
-	  args="/imu/data_raw/linear_acceleration/x:y:z"/>
+  <group ns="plot" if="$(eval with_plot == 1 and mode == 'Register')">
+    <node name="gyro" pkg="rqt_plot" type="rqt_plot" args="/imu/data_raw/angular_velocity/x:y:z"/>
+    <node name="accl" pkg="rqt_plot" type="rqt_plot" args="/imu/data_raw/linear_acceleration/x:y:z"/>
   </group>
 
 </launch>
