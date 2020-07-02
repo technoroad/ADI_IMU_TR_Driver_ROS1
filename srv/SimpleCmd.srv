@@ -1,0 +1,5 @@
+string cmd
+string[] args
+---
+string msg
+bool is_ok

@@ -38,40 +38,22 @@
 #include <tf/transform_broadcaster.h>
 #include <diagnostic_updater/diagnostic_updater.h>
 
+#include <adi_imu_tr_driver_ros1/SimpleCmd.h>
 #include "adis_rcv_csv.h"
 
 class ImuNodeRcvCsv {
 public:
   explicit ImuNodeRcvCsv(ros::NodeHandle nh)
     : node_handle_(nh) {
-    // Read parameters
-    node_handle_.param("device", device_, std::string("/dev/ttyACM0"));
-    node_handle_.param("frame_id", frame_id_, std::string("imu"));
-    node_handle_.param("parent_id", parent_id_, std::string("base_link"));
-    node_handle_.param("rate", rate_, 100.0);
-
-    std::string mode_str = "Attitude";
-    node_handle_.param("mode", mode_str, mode_str);
-    if (mode_str == "Attitude") {
-      imu_.SetMode(AdisRcvCsv::Mode::ATTIUDE);
-    } else if (mode_str == "Register") {
-      imu_.SetMode(AdisRcvCsv::Mode::REGISTER);
-    } else {
-      ROS_ERROR("Unknown mode [%s]. We use the default Attitude mode.", mode_str.c_str());
-      imu_.SetMode(AdisRcvCsv::Mode::ATTIUDE);
-      mode_str = "Attitude";
-    }
-
-    ROS_INFO("device: %s", device_.c_str());
-    ROS_INFO("frame_id: %s", frame_id_.c_str());
-    ROS_INFO("rate: %.1f [Hz]", rate_);
-    ROS_INFO("mode: %s", mode_str.c_str());
-
-    cant_rcv_cnt_ = 0;
     
+    InitParams();
+
     // Data publisher
     imu_data_pub_ = node_handle_.advertise<sensor_msgs::Imu>("data_raw", 100);
     updater_.add("imu", this, &ImuNodeRcvCsv::Diagnostic);
+    cmd_server_ = node_handle_.advertiseService("/imu/cmd_srv", &ImuNodeRcvCsv::CmdCb, this);
+
+    Prepare();
   }
 
   ~ImuNodeRcvCsv() {
@@ -102,6 +84,52 @@ public:
     imu_.Stop();
   }
 
+private:
+  AdisRcvCsv imu_;
+
+  ros::NodeHandle node_handle_;
+  ros::Publisher imu_data_pub_;
+  diagnostic_updater::Updater updater_;
+  ros::ServiceServer cmd_server_;
+  
+  
+  std::string device_;
+  std::string frame_id_;
+  std::string parent_id_;
+
+  double rate_;
+  int cant_rcv_cnt_;
+  
+  bool CmdCb(adi_imu_tr_driver_ros1::SimpleCmd::Request &req,
+             adi_imu_tr_driver_ros1::SimpleCmd::Response &res) {
+
+    res.is_ok = true;
+    
+    if (req.cmd == "") {
+      res.is_ok = false;
+      res.msg = "You are sending an empty command.";
+      return true;
+    }
+
+    std::string args = "";
+    for (size_t i = 0; i < req.args.size(); i++) {
+      args += "," + req.args[i];
+    }
+
+    res.msg = imu_.SendAndRetCmd(req.cmd, args);
+
+    return true;
+  }
+
+  void Diagnostic(diagnostic_updater::DiagnosticStatusWrapper &stat) {
+    if (cant_rcv_cnt_ >= 1) {
+      stat.summaryf(diagnostic_msgs::DiagnosticStatus::ERROR,
+                    "Data cannot be received for more than 1 second.");
+    } else {
+      stat.summaryf(diagnostic_msgs::DiagnosticStatus::OK, "OK");
+    }
+  }
+
   void Prepare() {
     while (ros::ok() && !imu_.Open(device_)) {
       ROS_WARN("Keep trying to open [%s] in 1 second period...", device_.c_str());
@@ -116,29 +144,32 @@ public:
     updater_.setHardwareID(imu_.GetProductIdStr());
   }
 
-private:
-  AdisRcvCsv imu_;
+  void InitParams() {
+    // Read parameters
+    node_handle_.param("device", device_, std::string("/dev/ttyACM0"));
+    node_handle_.param("frame_id", frame_id_, std::string("imu"));
+    node_handle_.param("parent_id", parent_id_, std::string("base_link"));
+    node_handle_.param("rate", rate_, 100.0);
 
-  ros::NodeHandle node_handle_;
-  ros::Publisher imu_data_pub_;
-  diagnostic_updater::Updater updater_;
-
-  std::string device_;
-  std::string frame_id_;
-  std::string parent_id_;
-
-  double rate_;
-  int cant_rcv_cnt_;
-   
-  void Diagnostic(diagnostic_updater::DiagnosticStatusWrapper &stat) {
-    if (cant_rcv_cnt_ >= 1) {
-      stat.summaryf(diagnostic_msgs::DiagnosticStatus::ERROR,
-                    "Data cannot be received for more than 1 second.");
+    std::string mode_str = "Attitude";
+    node_handle_.param("mode", mode_str, mode_str);
+    if (mode_str == "Attitude") {
+      imu_.SetMode(AdisRcvCsv::Mode::ATTIUDE);
+    } else if (mode_str == "Register") {
+      imu_.SetMode(AdisRcvCsv::Mode::REGISTER);
     } else {
-      stat.summaryf(diagnostic_msgs::DiagnosticStatus::OK, "OK");
+      ROS_ERROR("Unknown mode [%s]. We use the default Attitude mode.", mode_str.c_str());
+      imu_.SetMode(AdisRcvCsv::Mode::ATTIUDE);
+      mode_str = "Attitude";
     }
-  }
 
+    ROS_INFO("device: %s", device_.c_str());
+    ROS_INFO("frame_id: %s", frame_id_.c_str());
+    ROS_INFO("rate: %.1f [Hz]", rate_);
+    ROS_INFO("mode: %s", mode_str.c_str());
+
+    cant_rcv_cnt_ = 0;
+  }
 
   void PubImuData() {
     sensor_msgs::Imu data;
@@ -184,6 +215,8 @@ private:
   }
 
   void UpdateAndPubRegMode() {
+    if (imu_.GetState() != AdisRcvCsv::State::RUNNING) return;
+
     int res = imu_.UpdateRegMode();
     if (res == IMU_OK) {
       PubImuData();
@@ -196,6 +229,8 @@ private:
   }
 
   void UpdateAndPubYprMode() {
+    if (imu_.GetState() != AdisRcvCsv::State::RUNNING) return;
+
     int res = imu_.UpdateYprMode();
     if (res == IMU_OK) {
       BroadcastImuPose();
@@ -215,7 +250,6 @@ int main(int argc, char** argv) {
 
   ImuNodeRcvCsv node(nh);
   
-  node.Prepare();
   node.Spin();
   return 0;
 }
