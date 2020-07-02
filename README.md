@@ -135,8 +135,8 @@ How to update the calibration parameters.
 ```
 $ roslaunch adi_imu_tr_driver_ros1 adis_rcv_csv.launch mode:=Attitude device:=/dev/ttyACM0
 ```
-1. Leave the sensor stationary for 120 seconds. (Parameters are calculated automatically)
-1. Update the parameters with the following command.
+2. Leave the sensor stationary for 120 seconds. (Parameters are calculated automatically)
+3. Update the parameters with the following command.
 
 ```
 $ rosservice call /imu/cmd_srv "cmd: 'START_BIAS_CORRECTION'
@@ -150,8 +150,8 @@ How to reset the attitude angle.
 ```
 $ roslaunch adi_imu_tr_driver_ros1 adis_rcv_csv.launch mode:=Attitude device:=/dev/ttyACM0
 ```
-1. Leave the sensor stationary for 120 seconds. (Parameters are calculated automatically)
-1. Update the parameters with the following command.
+2. Leave the sensor stationary for 120 seconds. (Parameters are calculated automatically)
+3. Update the parameters with the following command.
 
 ```
 $ rosservice call /imu/cmd_srv "cmd: 'RESET_FILTER'
