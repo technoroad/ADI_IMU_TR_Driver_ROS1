@@ -19,6 +19,7 @@ This software is compatible with these sensors.
 
 ### Operating environment
 This software has been confirmed to work on the following OS and ROS versions.
+- Ubuntu 16.04 LTS + ros1 kinetic  
 - Ubuntu 18.04 LTS + ros1 melodic  
 - Ubuntu 20.04 LTS + ros1 noetic  
 
@@ -70,7 +71,7 @@ This software has the following modes.
 - Attitude mode
   - The attitude angle of the sensor is output as tf message.
 - Register mode
-  - The angular velocity and linear　acceleration are output as an IMU message.
+  - The angular velocity and linear acceleration are output as an IMU message.
 
 #### How to switch
 Open 'ADI_IMU_TR_Driver_ROS1/launch/adis_rcv_csv.launch' and change it with the mode tag.  
@@ -159,6 +160,12 @@ args:
 - ''"
 ```
 
-
+#### Use with imu_filter_madgwick
+How to input the sensor value in register mode to imu_filter_madgwick and output the attitude.
+1. Start the sensor in register mode using the following command.
+```
+$ roslaunch adi_imu_tr_driver_ros1 adis_rcv_csv.launch mode:=Register device:=/dev/ttyACM0 with_filter:=true
+```
+You can see the model of ADIS16470 breakout board in rviz panel.  
 ### License
 MIT

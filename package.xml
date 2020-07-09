@@ -24,6 +24,7 @@
   <run_depend>sensor_msgs</run_depend>
   <run_depend>xacro</run_depend>
   <run_depend>std_srvs</run_depend>
+  <run_depend>imu_filter_madgwick</run_depend>
 
   <test_depend>roslaunch</test_depend>
   <test_depend>rostest</test_depend>

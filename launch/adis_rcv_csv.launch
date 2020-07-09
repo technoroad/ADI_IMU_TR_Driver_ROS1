@@ -1,9 +1,10 @@
 <launch>
 Choice mode "Attitude" or "Register"
-  <arg name="mode"      default="Attitude"/>
-  <arg name="with_rviz" default="true"/>
-  <arg name="with_plot" default="false"/>
-  <arg name="device"    default="/dev/ttyACM0"/>
+  <arg name="mode"        default="Attitude"/>
+  <arg name="with_rviz"   default="true"/>
+  <arg name="with_plot"   default="false"/>
+  <arg name="with_filter" default="false"/>
+  <arg name="device"      default="/dev/ttyACM0"/>
 
   <arg name="parent_id"   default="odom"/>
   <arg name="frame_id"    default="imu"/>
@@ -19,10 +20,15 @@ Choice mode "Attitude" or "Register"
     <param name="mode"      value="$(arg mode)"/>
   </node>
 
+  <node if="$(eval with_filter == true)" name="imu_filter" pkg="imu_filter_madgwick" type="imu_filter_node">
+    <param name="use_mag"     value="false"/>
+    <param name="publish_tf"  value="true"/>
+    <param name="fixed_frame" value="$(arg parent_id)"/>
+  </node>
+  
+  <node if="$(eval with_rviz == true)" name="rviz" pkg="rviz" type="rviz" args="-d $(find adi_imu_tr_driver_ros1)/launch/imu.rviz"/>
 
-  <node if="$(eval with_rviz == 1 and mode == 'Attitude')" name="rviz" pkg="rviz" type="rviz" args="-d $(find adi_imu_tr_driver_ros1)/launch/imu.rviz"/>
-
-  <group ns="plot" if="$(eval with_plot == 1 and mode == 'Register')">
+  <group ns="plot" if="$(eval with_plot == true and mode == 'Register')">
     <node name="gyro" pkg="rqt_plot" type="rqt_plot" args="/imu/data_raw/angular_velocity/x:y:z"/>
     <node name="accl" pkg="rqt_plot" type="rqt_plot" args="/imu/data_raw/linear_acceleration/x:y:z"/>
   </group>
