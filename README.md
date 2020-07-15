@@ -13,7 +13,8 @@ This repository is the ROS1 driver for ADI_IMU.
 </div>
 
 ### Demo movie
-<iframe width="560" height="315" src="https://www.youtube.com/embed/2emmX7TSa1U" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+Youtube video will open.  
+  [![Adi-IMU-TR](http://img.youtube.com/vi/2emmX7TSa1U/0.jpg)](https://www.youtube.com/watch?v=2emmX7TSa1U "Adi-IMU-TR")
 
 ### Compatible sensors
 This software is compatible with these sensors.
