@@ -8,7 +8,13 @@ This repository is the ROS1 driver for ADI_IMU.
 “TR-IMU1647X” is Analog Devices IMU sensor that can be easily connected to ROS and output high-precision attitude angles.
 
 <div align="center">
-  <img src="doc/TR-IMU16475-2.jpg" width="60%"/>
+  <img src="doc/TR-IMU16475-2.jpg" width="32%"/>
+  <img src="doc/imu-platform.jpg" width="40%"/>
+</div>
+
+### Demo movie
+<div align="center">
+  [![Adi-IMU-TR](http://img.youtube.com/vi/2emmX7TSa1U/0.jpg)](https://www.youtube.com/watch?v=2emmX7TSa1U "Adi-IMU-TR")
 </div>
 
 ### Compatible sensors
@@ -24,10 +30,22 @@ This software has been confirmed to work on the following OS and ROS versions.
 - Ubuntu 20.04 LTS + ros1 noetic  
 
 ### How to use
+#### Port setting
+Add the user to the dialout group to use the USB port as the login user. (If you have already added it, skip this item)  
+Execute the following command.
+```
+$ sudo addgroup `whoami` dialout
+```
+Then, log out and log in again to reflect the settings.
+
 #### DIP switch settings
 First, set the DIP switch.
 - For TR-IMU16470 or TR-IMU16475-2, turn on No. 1 and No. 4 and turn off all the rest.
 - For TR-IMU-Platform, turn on No. 1 and No. 5 and turn off all the rest.
+
+<div align="center">
+  <img src="doc/dip-switches.jpg" width="60%"/>
+</div>
 
 After setting the switch, connect the sensor via USB.
 
@@ -64,6 +82,10 @@ $ roslaunch adi_imu_tr_driver_ros1 adis_rcv_csv.launch mode:=Attitude device:=/d
 ```
 
 You can see the model of ADIS16470 breakout board in rviz panel.  
+
+<div align="center">
+  <img src="doc/rviz.png" width="60%"/>
+</div>
 
 ### Modes
 #### Explanation
