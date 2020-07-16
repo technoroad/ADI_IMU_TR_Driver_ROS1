@@ -116,6 +116,7 @@ This software outputs the following topics.
   example:
 
 ```
+$ rostopic echo /imu/data_raw
 ・・・
 angular_velocity:
   x: -0.0116995596098
@@ -136,6 +137,7 @@ linear_acceleration_covariance: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
   example:
 
 ```
+$ rostopic echo /diagnostics
 ・・・
 header:
   seq: 80
