@@ -13,7 +13,7 @@ This repository is the ROS1 driver for ADI_IMU.
 </div>
 
 ### Demo movie
-Youtube video will open.  
+Click the thumbnail to open the youtube video.  
   [![Adi-IMU-TR](http://img.youtube.com/vi/2emmX7TSa1U/0.jpg)](https://www.youtube.com/watch?v=2emmX7TSa1U "Adi-IMU-TR")
 
 ### Compatible sensors
@@ -75,7 +75,14 @@ $ source devel/setup.bash
 ```
 
 #### Run
-Run the launch file as:
+This software has two execution modes.
+- Imu board(On-board angle estimation) + Rviz vizualization
+- Imu board(Acceleration and gyro output) + imu_filter_madgwick + Rviz vizualization
+
+The respective execution methods are shown below.
+
+##### Run imu board(On-board angle estimation) + Rviz vizualization
+Execute the following command.
 ```
 $ roslaunch adi_imu_tr_driver_ros1 adis_rcv_csv.launch mode:=Attitude device:=/dev/ttyACM0
 ```
@@ -86,22 +93,18 @@ You can see the model of ADIS16470 breakout board in rviz panel.
   <img src="doc/rviz.png" width="60%"/>
 </div>
 
-### Modes
-#### Explanation
-This software has the following modes.
-- Attitude mode
-  - The attitude angle of the sensor is output as tf message.
-- Register mode
-  - The angular velocity and linear acceleration are output as an IMU message.
+##### Run imu board(Acceleration and gyro output) + imu_filter_madgwick + Rviz vizualization
+Execute the following command.
+```
+$ roslaunch adi_imu_tr_driver_ros1 adis_rcv_csv.launch mode:=Register device:=/dev/ttyACM0 with_filter:=true
+```
 
-#### How to switch
-Open 'ADI_IMU_TR_Driver_ROS1/launch/adis_rcv_csv.launch' and change it with the mode tag.  
-```
-<launch>
-Choice mode "Attitude" or "Register"
-  <arg name="mode"      default="Attitude"/>
-・・・
-```
+You can see the model of ADIS16470 breakout board in rviz panel.  
+
+<div align="center">
+  <img src="doc/rviz.png" width="60%"/>
+</div>
+
 ### Topics
 This software outputs the following topics.
 
@@ -151,7 +154,7 @@ status:
 ```
 
 ### Common operations
-#### Calibration
+#### Calibration(Available only in Attitude mode)
 How to update the calibration parameters.
 1. Start the sensor in attitude mode using the following command.
 ```
@@ -166,7 +169,7 @@ args:
 - ''"
 ```
 
-#### Reset attitued
+#### Reset attitued(Available only in Attitude mode)
 How to reset the attitude angle.
 1. Start the sensor in attitude mode using the following command.
 ```
@@ -181,12 +184,5 @@ args:
 - ''"
 ```
 
-#### Use with imu_filter_madgwick
-How to input the sensor value in register mode to imu_filter_madgwick and output the attitude.
-1. Start the sensor in register mode using the following command.
-```
-$ roslaunch adi_imu_tr_driver_ros1 adis_rcv_csv.launch mode:=Register device:=/dev/ttyACM0 with_filter:=true
-```
-You can see the model of ADIS16470 breakout board in rviz panel.  
 ### License
 MIT
