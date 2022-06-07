@@ -24,7 +24,7 @@ This software is compatible with these sensors.
 
 ### Operating environment
 This software has been confirmed to work on the following OS and ROS versions.
-- Ubuntu 16.04 LTS + ros1 kinetic  
+- Ubuntu 16.04 LTS + ros1 kinetic (This is not maintained. If you use it, use the kinetic branch.)  
 - Ubuntu 18.04 LTS + ros1 melodic  
 - Ubuntu 20.04 LTS + ros1 noetic  
 
