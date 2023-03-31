@@ -198,7 +198,7 @@ args:
 ```
 $ rosservice call /imu/cmd_srv "cmd: 'help'
 args:
-- 'The reply is printed to the main terminal.If it is not output,please check the log level of launch file.'"
+- ''"
 ```
 ※ Sending the help command stops data transmission from IMU.Send the start command to resume.
 ```
